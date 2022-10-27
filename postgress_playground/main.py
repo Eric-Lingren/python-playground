@@ -62,6 +62,17 @@ try:
                                 ''', engine).head()
     print(db_catalog)
 
+    #* Build Indexes
+    pgconn = engine.connect()
+    pgconn.execute('CREATE INDEX IF NOT EXISTS idx_time ON cadhkd15min("TIME")')
+
+    #* Build Date Dimensions
+    date_dimensions_query = pd.read_sql_query('''select ordinal_position, column_name, data_type
+                                        from information_schema.columns
+                                        where table_name = 'cadhkd15min'
+                                    ''', engine).head()
+    print(date_dimensions_query)
+
 except (Exception, psycopg2.Error) as error :
     print ("Error while connecting to postgres", error)
 finally:
